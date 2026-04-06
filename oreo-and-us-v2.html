@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>somewhere between screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --paper: #1a1410;
+    --paper-mid: #211c16;
+    --paper-light: #2a231a;
+    --oreo: #f0ece0;
+    --oreo-soft: #d4cfc0;
+    --oreo-muted: #9a9488;
+    --oreo-faint: #5a5550;
+    --accent: #c8a96e;
+    --accent-light: #e8d5a8;
+    --accent-dark: #8a6a30;
+    --red-soft: #c0614a;
+    --paw: #3a3028;
+  }
+
+  html { background: #0e0c09; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    background: #0e0c09;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+    min-height: 100vh;
+  }
+
+  .book-wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── PAGE BASE ── */
+  .page {
+    background: var(--paper);
+    width: 100%;
+    min-height: 680px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3.5rem 3rem 4rem;
+    margin-bottom: 6px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.6), inset 0 0 80px rgba(0,0,0,0.15);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),
+      linear-gradient(160deg, #1e1812 0%, #1a1410 40%, #161109 100%);
+  }
+
+  .page::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, transparent, var(--accent-dark), transparent);
+    opacity: 0.6;
+  }
+
+  /* page number */
+  .page-num {
+    position: absolute;
+    bottom: 1.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    color: var(--oreo-faint);
+    font-style: italic;
+  }
+
+  /* ── COVER ── */
+  .page-cover {
+    min-height: 780px;
+    justify-content: flex-start;
+    padding: 0;
+    overflow: hidden;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E"),
+      linear-gradient(150deg, #211c14 0%, #1a1410 50%, #120f08 100%);
+  }
+
+  .cover-paw-field {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .cover-paw-field .paw {
+    position: absolute;
+    font-size: 1.1rem;
+    color: var(--paw);
+    user-select: none;
+  }
+
+  /* scattered paws */
+  .paw-1  { top: 6%;  left: 8%;  transform: rotate(-22deg); font-size: 0.8rem; opacity: 0.6; }
+  .paw-2  { top: 12%; left: 78%; transform: rotate(15deg);  font-size: 1.3rem; opacity: 0.4; }
+  .paw-3  { top: 22%; left: 18%; transform: rotate(8deg);   font-size: 0.7rem; opacity: 0.35; }
+  .paw-4  { top: 28%; left: 88%; transform: rotate(-30deg); font-size: 0.9rem; opacity: 0.5; }
+  .paw-5  { top: 40%; left: 5%;  transform: rotate(40deg);  font-size: 1.1rem; opacity: 0.3; }
+  .paw-6  { top: 55%; left: 82%; transform: rotate(-12deg); font-size: 0.75rem;opacity: 0.45; }
+  .paw-7  { top: 68%; left: 12%; transform: rotate(25deg);  font-size: 0.65rem;opacity: 0.3; }
+  .paw-8  { top: 75%; left: 70%; transform: rotate(-5deg);  font-size: 1.2rem; opacity: 0.4; }
+  .paw-9  { top: 85%; left: 30%; transform: rotate(18deg);  font-size: 0.85rem;opacity: 0.35; }
+  .paw-10 { top: 92%; left: 88%; transform: rotate(-20deg); font-size: 0.9rem; opacity: 0.5; }
+  .paw-11 { top: 48%; left: 48%; transform: rotate(10deg);  font-size: 2.5rem; opacity: 0.07; }
+
+  .cover-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    min-height: 780px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4rem 3.2rem;
+  }
+
+  .cover-top { display: flex; flex-direction: column; align-items: flex-start; }
+
+  .cover-tag {
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2.8rem;
+    opacity: 0.8;
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 3.6rem;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.12;
+    color: var(--oreo);
+    margin-bottom: 1rem;
+  }
+
+  .cover-subtitle {
+    font-size: 0.88rem;
+    color: var(--oreo-muted);
+    font-style: italic;
+    letter-spacing: 0.04em;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--accent);
+    margin: 2rem 0;
+    opacity: 0.5;
+  }
+
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .cover-initial {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 5rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--accent);
+    opacity: 0.15;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .cover-year {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--oreo-faint);
+  }
+
+  /* ── INDEX PAGE ── */
+  .page-index {
+    justify-content: flex-start;
+    padding-top: 3.5rem;
+    min-height: 820px;
+    align-items: flex-start;
+  }
+
+  .index-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+
+  .index-section {
+    width: 100%;
+    margin-bottom: 1.6rem;
+  }
+
+  .index-section-name {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--oreo-muted);
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 0.5px solid var(--oreo-faint);
+    opacity: 0.8;
+  }
+
+  .index-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.2rem 0;
+    gap: 8px;
+  }
+
+  .index-poem-title {
+    font-size: 0.78rem;
+    color: var(--oreo-soft);
+    font-style: italic;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .index-dots {
+    flex: 1;
+    border-bottom: 1px dotted var(--oreo-faint);
+    margin: 0 6px;
+    position: relative;
+    top: -3px;
+    opacity: 0.4;
+  }
+
+  .index-num {
+    font-size: 0.7rem;
+    color: var(--oreo-faint);
+    min-width: 18px;
+    text-align: right;
+  }
+
+  /* ── NOTE PAGE ── */
+  .page-note { min-height: 400px; justify-content: center; }
+
+  .note-text {
+    font-size: 0.9rem;
+    color: var(--oreo-soft);
+    line-height: 2.1;
+    font-style: italic;
+    text-align: center;
+    max-width: 300px;
+  }
+
+  /* ── POEM PAGE ── */
+  .poem-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.45rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--oreo);
+    margin-bottom: 2rem;
+    width: 100%;
+    text-align: left;
+    line-height: 1.25;
+  }
+
+  .poem-body {
+    font-size: 0.92rem;
+    line-height: 2.05;
+    color: var(--oreo-soft);
+    font-style: italic;
+    width: 100%;
+    text-align: left;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+  }
+
+  .poem-body p { margin: 0; }
+  .poem-body .stanza { margin-bottom: 1.5em; }
+  .poem-body .stanza:last-child { margin-bottom: 0; }
+
+  /* easter egg hover word */
+  .secret {
+    cursor: default;
+    border-bottom: 1px dotted var(--oreo-faint);
+    transition: color 0.3s;
+  }
+  .secret:hover { color: var(--accent); }
+  .secret[data-msg]::after {
+    content: attr(data-msg);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 3.5rem;
+    background: var(--paper-light);
+    border: 0.5px solid var(--accent-dark);
+    color: var(--accent-light);
+    font-size: 0.72rem;
+    font-style: normal;
+    letter-spacing: 0.05em;
+    padding: 6px 14px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-family: 'EB Garamond', serif;
+    border-radius: 2px;
+  }
+  .secret:hover[data-msg]::after { opacity: 1; }
+
+  /* section break pages */
+  .page-section-break {
+    min-height: 280px;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 3rem;
+  }
+
+  .section-num {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+    opacity: 0.7;
+  }
+
+  .section-label {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.2rem;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--oreo);
+    line-height: 1.2;
+    max-width: 320px;
+  }
+
+  .section-divider {
+    width: 40px;
+    height: 0.5px;
+    background: var(--accent);
+    margin-top: 1.2rem;
+    opacity: 0.4;
+  }
+
+  /* end page */
+  .page-end { min-height: 400px; justify-content: center; }
+
+  .end-text {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--oreo-soft);
+    text-align: center;
+    line-height: 2.2;
+  }
+
+  .end-paw {
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
+    opacity: 0.2;
+    text-align: center;
+  }
+
+  /* k watermark on certain pages */
+  .k-mark {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 2.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 4.5rem;
+    font-style: italic;
+    color: var(--oreo-faint);
+    opacity: 0.12;
+    user-select: none;
+    line-height: 1;
+  }
+
+  /* spine */
+  .spine {
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(to right, #0a0805, #2a201a, #0a0805);
+  }
+
+  /* oreo section special */
+  .page-oreo {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),
+      linear-gradient(160deg, #1c1a12 0%, #181610 40%, #141208 100%);
+  }
+
+  .ornament {
+    position: absolute;
+    bottom: 2.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--accent);
+    opacity: 0.3;
+  }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; margin-bottom: 0; page-break-after: always; }
+    .spine { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="book-wrap">
+
+<!-- COVER -->
+<div class="page page-cover">
+  <div class="cover-paw-field">
+    <span class="paw paw-1">🐾</span>
+    <span class="paw paw-2">🐾</span>
+    <span class="paw paw-3">🐾</span>
+    <span class="paw paw-4">🐾</span>
+    <span class="paw paw-5">🐾</span>
+    <span class="paw paw-6">🐾</span>
+    <span class="paw paw-7">🐾</span>
+    <span class="paw paw-8">🐾</span>
+    <span class="paw paw-9">🐾</span>
+    <span class="paw paw-10">🐾</span>
+    <span class="paw paw-11">🐾</span>
+  </div>
+  <div class="cover-inner">
+    <div class="cover-top">
+      <div class="cover-tag">forty-two poems &nbsp;·&nbsp; for k</div>
+      <div class="cover-title">somewhere<br>between<br>screens</div>
+      <div class="cover-subtitle">and everything that grew there</div>
+      <div class="cover-divider"></div>
+    </div>
+    <div class="cover-bottom">
+      <div class="cover-initial">k</div>
+      <div class="cover-year">2024 — 2025</div>
+    </div>
+  </div>
+</div>
+
+<div class="spine"></div>
+
+<!-- INDEX -->
+<div class="page page-index">
+  <div class="index-title">what's inside</div>
+
+  <div class="index-section">
+    <div class="index-section-name">i. the accidental beginning</div>
+    <div class="index-row"><span class="index-poem-title">wrong screen, right person</span><span class="index-dots"></span><span class="index-num">1</span></div>
+    <div class="index-row"><span class="index-poem-title">ometv, 2am</span><span class="index-dots"></span><span class="index-num">2</span></div>
+    <div class="index-row"><span class="index-poem-title">strangers do this</span><span class="index-dots"></span><span class="index-num">3</span></div>
+    <div class="index-row"><span class="index-poem-title">the first time i laughed</span><span class="index-dots"></span><span class="index-num">4</span></div>
+    <div class="index-row"><span class="index-poem-title">without a map</span><span class="index-dots"></span><span class="index-num">5</span></div>
+    <div class="index-row"><span class="index-poem-title">what caring costs</span><span class="index-dots"></span><span class="index-num">6</span></div>
+    <div class="index-row"><span class="index-poem-title">miles is just a word</span><span class="index-dots"></span><span class="index-num">7</span></div>
+  </div>
+
+  <div class="index-section">
+    <div class="index-section-name">ii. the daily religion of us</div>
+    <div class="index-row"><span class="index-poem-title">same playlist</span><span class="index-dots"></span><span class="index-num">8</span></div>
+    <div class="index-row"><span class="index-poem-title">rage bait</span><span class="index-dots"></span><span class="index-num">9</span></div>
+    <div class="index-row"><span class="index-poem-title">3am honesty</span><span class="index-dots"></span><span class="index-num">10</span></div>
+    <div class="index-row"><span class="index-poem-title">cute fight no. 1</span><span class="index-dots"></span><span class="index-num">11</span></div>
+    <div class="index-row"><span class="index-poem-title">she calls anyway</span><span class="index-dots"></span><span class="index-num">12</span></div>
+    <div class="index-row"><span class="index-poem-title">funny bone</span><span class="index-dots"></span><span class="index-num">13</span></div>
+    <div class="index-row"><span class="index-poem-title">the videos she sends</span><span class="index-dots"></span><span class="index-num">14</span></div>
+    <div class="index-row"><span class="index-poem-title">i told her everything</span><span class="index-dots"></span><span class="index-num">15</span></div>
+    <div class="index-row"><span class="index-poem-title">how we say it</span><span class="index-dots"></span><span class="index-num">16</span></div>
+    <div class="index-row"><span class="index-poem-title">trolling as love</span><span class="index-dots"></span><span class="index-num">17</span></div>
+    <div class="index-row"><span class="index-poem-title">late</span><span class="index-dots"></span><span class="index-num">18</span></div>
+    <div class="index-row"><span class="index-poem-title">where i won't go</span><span class="index-dots"></span><span class="index-num">19</span></div>
+    <div class="index-row"><span class="index-poem-title">no label needed</span><span class="index-dots"></span><span class="index-num">20</span></div>
+  </div>
+
+  <div class="index-section">
+    <div class="index-section-name">iii. the quiet that didn't break us</div>
+    <div class="index-row"><span class="index-poem-title">she went quiet</span><span class="index-dots"></span><span class="index-num">21</span></div>
+    <div class="index-row"><span class="index-poem-title">college took her</span><span class="index-dots"></span><span class="index-num">22</span></div>
+    <div class="index-row"><span class="index-poem-title">the gap</span><span class="index-dots"></span><span class="index-num">23</span></div>
+    <div class="index-row"><span class="index-poem-title">waiting without waiting</span><span class="index-dots"></span><span class="index-num">24</span></div>
+    <div class="index-row"><span class="index-poem-title">she came back</span><span class="index-dots"></span><span class="index-num">25</span></div>
+    <div class="index-row"><span class="index-poem-title">like nothing</span><span class="index-dots"></span><span class="index-num">26</span></div>
+    <div class="index-row"><span class="index-poem-title">proof</span><span class="index-dots"></span><span class="index-num">27</span></div>
+  </div>
+
+  <div class="index-section">
+    <div class="index-section-name">iv. oreo, a portrait in chaos</div>
+    <div class="index-row"><span class="index-poem-title">oreo, first appearance</span><span class="index-dots"></span><span class="index-num">28</span></div>
+    <div class="index-row"><span class="index-poem-title">the chaos agent</span><span class="index-dots"></span><span class="index-num">29</span></div>
+    <div class="index-row"><span class="index-poem-title">oreo doesn't know</span><span class="index-dots"></span><span class="index-num">30</span></div>
+    <div class="index-row"><span class="index-poem-title">the white dog</span><span class="index-dots"></span><span class="index-num">31</span></div>
+    <div class="index-row"><span class="index-poem-title">oreo, last seen</span><span class="index-dots"></span><span class="index-num">32</span></div>
+  </div>
+
+  <div class="index-section">
+    <div class="index-section-name">v. k, and everything that word holds</div>
+    <div class="index-row"><span class="index-poem-title">unnamed</span><span class="index-dots"></span><span class="index-num">33</span></div>
+    <div class="index-row"><span class="index-poem-title">distance, redefined</span><span class="index-dots"></span><span class="index-num">34</span></div>
+    <div class="index-row"><span class="index-poem-title">the year of you</span><span class="index-dots"></span><span class="index-num">35</span></div>
+    <div class="index-row"><span class="index-poem-title">what i kept</span><span class="index-dots"></span><span class="index-num">36</span></div>
+    <div class="index-row"><span class="index-poem-title">how i know it's real</span><span class="index-dots"></span><span class="index-num">37</span></div>
+    <div class="index-row"><span class="index-poem-title">things i never said</span><span class="index-dots"></span><span class="index-num">38</span></div>
+    <div class="index-row"><span class="index-poem-title">for the record</span><span class="index-dots"></span><span class="index-num">39</span></div>
+    <div class="index-row"><span class="index-poem-title">soft landing</span><span class="index-dots"></span><span class="index-num">40</span></div>
+    <div class="index-row"><span class="index-poem-title">still here</span><span class="index-dots"></span><span class="index-num">41</span></div>
+    <div class="index-row"><span class="index-poem-title">somewhere between</span><span class="index-dots"></span><span class="index-num">42</span></div>
+  </div>
+  <div class="page-num">— contents —</div>
+</div>
+
+<!-- NOTE TO READER -->
+<div class="page page-note">
+  <div class="note-text">
+    this book was written for one person.<br>
+    if you are reading it and you are not her —<br>
+    put it down.<br><br>
+    if you are her —<br>
+    hi, <span class="secret" data-msg="yeah, you. specifically you.">k</span>.<br>
+    i made you something.
+  </div>
+  <div class="page-num">—</div>
+</div>
+
+<!-- SECTION BREAK I -->
+<div class="page page-section-break">
+  <div class="section-num">part one</div>
+  <div class="section-label">the accidental<br>beginning</div>
+  <div class="section-divider"></div>
+</div>
+
+<!-- POEM 1 -->
+<div class="page">
+  <div class="poem-title">wrong screen, right person</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>i opened the app</p>
+      <p>not looking for anything</p>
+      <p>the way you don't look for things</p>
+      <p>right before you find them</p>
+    </div>
+    <div class="stanza">
+      <p>the screen blinked</p>
+      <p>and there you were</p>
+      <p>a stranger with the energy of someone</p>
+      <p>i'd already been talking to my whole life</p>
+    </div>
+    <div class="stanza">
+      <p>it was stupid</p>
+      <p>it was ometv at a weird hour</p>
+      <p>it was exactly right</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">1</div>
+</div>
+
+<!-- POEM 2 -->
+<div class="page">
+  <div class="poem-title">ometv, 2am</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>the internet at that hour is mostly lonely</p>
+      <p>you can feel it through the screen</p>
+      <p>everybody looking</p>
+      <p>nobody saying what for</p>
+    </div>
+    <div class="stanza">
+      <p>and then you said something</p>
+      <p>i don't even remember what</p>
+      <p>but i laughed before i could stop myself</p>
+    </div>
+    <div class="stanza">
+      <p>that's how it starts, i think —</p>
+      <p>not slowly</p>
+      <p>but suddenly, and then all at once</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">2</div>
+</div>
+
+<!-- POEM 3 -->
+<div class="page">
+  <div class="poem-title">strangers do this</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>strangers don't usually do this</p>
+      <p>stay</p>
+      <p>become something</p>
+      <p>remember each other's details</p>
+    </div>
+    <div class="stanza">
+      <p>strangers swipe on</p>
+      <p>forget the face before the next one loads</p>
+    </div>
+    <div class="stanza">
+      <p>but you didn't</p>
+      <p>and i didn't</p>
+      <p>and now a year later</p>
+      <p>here we are</p>
+      <p>the strangest friends</p>
+      <p>who chose to not stay strange</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">3</div>
+</div>
+
+<!-- POEM 4 -->
+<div class="page">
+  <div class="poem-title">the first time i laughed</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>i laughed the kind of laugh</p>
+      <p>that surprises your own face</p>
+      <p>the kind that comes out ugly</p>
+      <p>because it's actually real</p>
+    </div>
+    <div class="stanza">
+      <p>you didn't even try that hard</p>
+      <p>that was the worst part</p>
+      <p>you were just being you</p>
+      <p>and that was somehow enough</p>
+      <p>to undo me a little</p>
+    </div>
+    <div class="stanza">
+      <p>i haven't fully recovered</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">4</div>
+</div>
+
+<!-- POEM 5 -->
+<div class="page">
+  <div class="poem-title">without a map</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>we never sat down and said</p>
+      <p>okay, here's what we are</p>
+      <p>here are the rules</p>
+      <p>here's how this works</p>
+    </div>
+    <div class="stanza">
+      <p>we just kept talking</p>
+      <p>kept sending things</p>
+      <p>kept showing up</p>
+    </div>
+    <div class="stanza">
+      <p>and somewhere in that</p>
+      <p>a thing was built</p>
+      <p>that neither of us designed</p>
+      <p>but both of us live in</p>
+    </div>
+  </div>
+  <div class="k-mark">k</div>
+  <div class="ornament">✦</div>
+  <div class="page-num">5</div>
+</div>
+
+<!-- POEM 6 -->
+<div class="page">
+  <div class="poem-title">what caring costs</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>caring about someone you've never touched</p>
+      <p>never sat next to</p>
+      <p>never handed a cup of something warm</p>
+      <p>feels strange</p>
+      <p>until it doesn't</p>
+    </div>
+    <div class="stanza">
+      <p>and then it just feels</p>
+      <p>like the most natural thing</p>
+      <p>you forgot you were doing</p>
+    </div>
+    <div class="stanza">
+      <p>when something good happened</p>
+      <p>you were the first person i wanted to tell</p>
+      <p>that's not nothing</p>
+      <p>that's actually everything</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">6</div>
+</div>
+
+<!-- POEM 7 -->
+<div class="page">
+  <div class="poem-title">miles is just a word</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>miles</p>
+      <p>is a unit of measurement</p>
+      <p>designed for roads</p>
+      <p>not for people who text each other</p>
+      <p>at 3am like it's nothing</p>
+    </div>
+    <div class="stanza">
+      <p>we were never close</p>
+      <p>the way a map would say</p>
+    </div>
+    <div class="stanza">
+      <p>but we were always close</p>
+      <p>in the way that counts</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">7</div>
+</div>
+
+<!-- SECTION BREAK II -->
+<div class="page page-section-break">
+  <div class="section-num">part two</div>
+  <div class="section-label">the daily religion<br>of us</div>
+  <div class="section-divider"></div>
+</div>
+
+<!-- POEM 8 -->
+<div class="page">
+  <div class="poem-title">same playlist</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>when someone likes the same songs as you</p>
+      <p>it means something</p>
+      <p>i don't know what exactly</p>
+      <p>but it means something</p>
+    </div>
+    <div class="stanza">
+      <p>like your brain was tuned</p>
+      <p>to the same frequency</p>
+      <p>before you ever met</p>
+      <p>just waiting for the right signal</p>
+    </div>
+    <div class="stanza">
+      <p>we share music like we share secrets</p>
+      <p>casually</p>
+      <p>like it's not a big deal</p>
+      <p>when actually it's the whole deal</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">8</div>
+</div>
+
+<!-- POEM 9 -->
+<div class="page">
+  <div class="poem-title">rage bait</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>she knows exactly which button</p>
+      <p>every single time</p>
+    </div>
+    <div class="stanza">
+      <p>she'll send one thing</p>
+      <p>one perfectly chosen thing</p>
+      <p>and wait</p>
+      <p>i can feel her waiting</p>
+      <p>grinning somewhere across the distance</p>
+    </div>
+    <div class="stanza">
+      <p>and i take it every time</p>
+      <p>every single time</p>
+      <p>and we both know it</p>
+    </div>
+    <div class="stanza">
+      <p>only someone who really knows you</p>
+      <p>can bait you this well</p>
+      <p>i consider this a form of <span class="secret" data-msg="(it is. it really is.)">love</span></p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">9</div>
+</div>
+
+<!-- POEM 10 -->
+<div class="page">
+  <div class="poem-title">3am honesty</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>there's a version of yourself</p>
+      <p>that only comes out past midnight</p>
+      <p>less edited</p>
+      <p>less careful</p>
+      <p>more true</p>
+    </div>
+    <div class="stanza">
+      <p>she gets that version of me</p>
+      <p>the one that says the real thing</p>
+      <p>instead of the safe thing</p>
+    </div>
+    <div class="stanza">
+      <p>late nights do that</p>
+      <p>they strip the performance away</p>
+      <p>and what's left is just you</p>
+      <p>talking to someone who actually wants</p>
+      <p>the you underneath</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">10</div>
+</div>
+
+<!-- POEM 11 -->
+<div class="page">
+  <div class="poem-title">cute fight no. 1</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>we disagreed</p>
+      <p>loudly, briefly</p>
+      <p>about something completely stupid</p>
+    </div>
+    <div class="stanza">
+      <p>and then we were fine</p>
+      <p>like immediately</p>
+      <p>like the fight was just a detour</p>
+      <p>we both knew we'd come back from</p>
+    </div>
+    <div class="stanza">
+      <p>fights with her never feel dangerous</p>
+      <p>they feel like bumping into a wall</p>
+      <p>in your own house</p>
+      <p>annoying</p>
+      <p>but familiar</p>
+      <p>and <span class="secret" data-msg="yours. the house is yours.">yours</span></p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">11</div>
+</div>
+
+<!-- POEM 12 -->
+<div class="page">
+  <div class="poem-title">she calls anyway</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>i told her early —</p>
+      <p>i'm not a call person</p>
+      <p>i hate the pauses</p>
+      <p>the not knowing when to speak</p>
+    </div>
+    <div class="stanza">
+      <p>she calls anyway</p>
+    </div>
+    <div class="stanza">
+      <p>and here's the thing —</p>
+      <p>with her, there are no bad pauses</p>
+      <p>just breathing room</p>
+      <p>just us, existing on the same night</p>
+      <p>in different cities</p>
+      <p>sharing the quiet like it's something</p>
+    </div>
+    <div class="stanza">
+      <p>she made me a call person</p>
+      <p>i'll never tell her that</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">12</div>
+</div>
+
+<!-- POEM 13 -->
+<div class="page">
+  <div class="poem-title">funny bone</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>we laugh at things</p>
+      <p>that aren't even that funny</p>
+      <p>but together they're hilarious</p>
+      <p>which means the joke is us</p>
+      <p>the joke is the fact of us</p>
+    </div>
+    <div class="stanza">
+      <p>i've laughed more in this friendship</p>
+      <p>than i have in rooms full of people</p>
+    </div>
+    <div class="stanza">
+      <p>through a screen</p>
+      <p>from miles away</p>
+      <p>at 2am</p>
+      <p>about nothing</p>
+      <p>it's my favorite place to be</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">13</div>
+</div>
+
+<!-- POEM 14 -->
+<div class="page">
+  <div class="poem-title">the videos she sends</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>she sends me videos</p>
+      <p>of oreo doing something</p>
+      <p>catastrophically unimportant</p>
+    </div>
+    <div class="stanza">
+      <p>oreo staring at a wall</p>
+      <p>oreo refusing to cooperate</p>
+      <p>oreo being, as always,</p>
+      <p>completely himself</p>
+    </div>
+    <div class="stanza">
+      <p>and each one is basically her saying</p>
+      <p>hey, i thought of you</p>
+      <p>here's something dumb and cute</p>
+      <p>here's proof i'm thinking about you</p>
+    </div>
+    <div class="stanza">
+      <p>i keep them all</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">14</div>
+</div>
+
+<!-- POEM 15 -->
+<div class="page">
+  <div class="poem-title">i told her everything</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>the random thoughts</p>
+      <p>the ones i'd never say out loud</p>
+      <p>the 11pm observations about nothing</p>
+      <p>the things that made no sense</p>
+      <p>but made sense to her</p>
+    </div>
+    <div class="stanza">
+      <p>she told me everything back</p>
+    </div>
+    <div class="stanza">
+      <p>i think that's what trust looks like</p>
+      <p>not a big declaration</p>
+      <p>just handing someone your thoughts</p>
+      <p>one by one</p>
+      <p>and watching them hold each one</p>
+      <p>carefully</p>
+    </div>
+  </div>
+  <div class="k-mark">k</div>
+  <div class="ornament">✦</div>
+  <div class="page-num">15</div>
+</div>
+
+<!-- POEM 16 -->
+<div class="page">
+  <div class="poem-title">how we say it</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>we don't always say it in words</p>
+    </div>
+    <div class="stanza">
+      <p>sometimes it's in the dumb meme</p>
+      <p>sent at midnight</p>
+      <p>sometimes it's checking in</p>
+      <p>when the other one goes quiet</p>
+      <p>sometimes it's remembering a detail</p>
+      <p>mentioned two weeks ago</p>
+    </div>
+    <div class="stanza">
+      <p>but when we do say it —</p>
+      <p>it doesn't float in the air</p>
+      <p>it lands</p>
+      <p>every time</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">16</div>
+</div>
+
+<!-- POEM 17 -->
+<div class="page">
+  <div class="poem-title">trolling as love</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>people think trolling is mean</p>
+      <p>and sure, sometimes</p>
+    </div>
+    <div class="stanza">
+      <p>but with us it's more like</p>
+      <p>i know you well enough to poke</p>
+      <p>i know you well enough</p>
+      <p>that you know i'm poking</p>
+      <p>not stabbing</p>
+    </div>
+    <div class="stanza">
+      <p>it's intimacy in disguise</p>
+      <p>which is honestly</p>
+      <p>the best kind</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">17</div>
+</div>
+
+<!-- POEM 18 -->
+<div class="page">
+  <div class="poem-title">late</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>late at night</p>
+      <p>the world gets smaller</p>
+      <p>the noise drops</p>
+      <p>the pretending stops</p>
+    </div>
+    <div class="stanza">
+      <p>and in that smaller, quieter world</p>
+      <p>there's a version of this friendship</p>
+      <p>that is completely unguarded</p>
+    </div>
+    <div class="stanza">
+      <p>i love those hours</p>
+      <p>i love who we are</p>
+      <p>when the day stops watching</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">18</div>
+</div>
+
+<!-- POEM 19 -->
+<div class="page">
+  <div class="poem-title">where i won't go</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>she said where her line was</p>
+      <p>once, quietly</p>
+      <p>and i remembered it</p>
+    </div>
+    <div class="stanza">
+      <p>i said where mine was</p>
+      <p>and she remembered it</p>
+    </div>
+    <div class="stanza">
+      <p>no negotiation</p>
+      <p>no pushing</p>
+      <p>just — okay</p>
+      <p>i see you</p>
+      <p>i won't go there</p>
+    </div>
+    <div class="stanza">
+      <p>that kind of quiet respect</p>
+      <p>is rarer than people think</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">19</div>
+</div>
+
+<!-- POEM 20 -->
+<div class="page">
+  <div class="poem-title">no label needed</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>someone asked what we were once</p>
+      <p>and i didn't have a word</p>
+    </div>
+    <div class="stanza">
+      <p>not because it isn't something</p>
+      <p>but because the word that exists</p>
+      <p>for what we are</p>
+      <p>hasn't been made yet</p>
+    </div>
+    <div class="stanza">
+      <p>friend is too small</p>
+      <p>everything else is the wrong shape</p>
+    </div>
+    <div class="stanza">
+      <p>we are what we are</p>
+      <p>and we both know it</p>
+      <p>and that's enough</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">20</div>
+</div>
+
+<!-- SECTION BREAK III -->
+<div class="page page-section-break">
+  <div class="section-num">part three</div>
+  <div class="section-label">the quiet that<br>didn't break us</div>
+  <div class="section-divider"></div>
+</div>
+
+<!-- POEM 21 -->
+<div class="page">
+  <div class="poem-title">she went quiet</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>the messages slowed</p>
+      <p>then stopped</p>
+      <p>the way rain stops</p>
+      <p>without asking permission</p>
+    </div>
+    <div class="stanza">
+      <p>i didn't panic</p>
+      <p>not exactly</p>
+      <p>but i noticed</p>
+      <p>the way you notice silence</p>
+      <p>in a room that used to have music</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">21</div>
+</div>
+
+<!-- POEM 22 -->
+<div class="page">
+  <div class="poem-title">college took her</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>college is a kind of disappearing</p>
+      <p>the world accelerates</p>
+      <p>the days blur</p>
+      <p>the phone stays in a pocket</p>
+      <p>that doesn't get checked</p>
+    </div>
+    <div class="stanza">
+      <p>i understood</p>
+    </div>
+    <div class="stanza">
+      <p>understanding doesn't stop you missing</p>
+      <p>but it stops you being angry</p>
+      <p>and that's almost the same thing</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">22</div>
+</div>
+
+<!-- POEM 23 -->
+<div class="page">
+  <div class="poem-title">the gap</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>there was a gap</p>
+      <p>real and noticeable</p>
+      <p>the kind you feel like a missing step</p>
+      <p>in the dark</p>
+    </div>
+    <div class="stanza">
+      <p>but gaps aren't endings</p>
+      <p>a pause is not a period</p>
+    </div>
+    <div class="stanza">
+      <p>i kept that thought</p>
+      <p>like a spare key</p>
+      <p>just in case</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">23</div>
+</div>
+
+<!-- POEM 24 -->
+<div class="page">
+  <div class="poem-title">waiting without waiting</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>i wasn't waiting for her</p>
+      <p>i was just</p>
+      <p>living my life</p>
+      <p>with a small door left open</p>
+    </div>
+    <div class="stanza">
+      <p>that's the art of it</p>
+      <p>not clinging</p>
+      <p>not forgetting either</p>
+      <p>just</p>
+      <p>keeping the space warm</p>
+    </div>
+  </div>
+  <div class="k-mark">k</div>
+  <div class="ornament">✦</div>
+  <div class="page-num">24</div>
+</div>
+
+<!-- POEM 25 -->
+<div class="page">
+  <div class="poem-title">she came back</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>and then one day</p>
+      <p>a notification</p>
+      <p>and suddenly oreo again</p>
+      <p>her face again</p>
+      <p>her energy, completely undiminished</p>
+      <p>like someone had pressed unpause</p>
+    </div>
+    <div class="stanza">
+      <p>she came back</p>
+      <p>which means she always was going to</p>
+      <p>which means the gap was just</p>
+      <p>a breath between sentences</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">25</div>
+</div>
+
+<!-- POEM 26 -->
+<div class="page">
+  <div class="poem-title">like nothing</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>she came back like nothing happened</p>
+      <p>and i loved her for that</p>
+    </div>
+    <div class="stanza">
+      <p>no long explanation</p>
+      <p>no apology tour</p>
+      <p>just — hey</p>
+      <p>look at this oreo video</p>
+      <p>look at this stupid thing</p>
+      <p>i missed you so much i can't explain it</p>
+      <p>so instead here's a dog</p>
+    </div>
+    <div class="stanza">
+      <p>perfect</p>
+      <p>absolutely her</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">26</div>
+</div>
+
+<!-- POEM 27 -->
+<div class="page">
+  <div class="poem-title">proof</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>some things break in the silence</p>
+      <p>and some things don't</p>
+    </div>
+    <div class="stanza">
+      <p>ours didn't</p>
+    </div>
+    <div class="stanza">
+      <p>we survived the quiet</p>
+      <p>came back from the gap</p>
+      <p>picked up mid-sentence</p>
+    </div>
+    <div class="stanza">
+      <p>that's not luck</p>
+      <p>that's <span class="secret" data-msg="it was always going to be okay.">something</span></p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">27</div>
+</div>
+
+<!-- SECTION BREAK IV -->
+<div class="page page-section-break page-oreo">
+  <div class="section-num">part four</div>
+  <div class="section-label">oreo, a portrait<br>in chaos</div>
+  <div class="section-divider"></div>
+</div>
+
+<!-- POEM 28 -->
+<div class="page page-oreo">
+  <div class="poem-title">oreo, first appearance</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>he walked into frame</p>
+      <p>like he owned it</p>
+      <p>like he knew exactly what he was doing</p>
+      <p>which was ruining her video</p>
+      <p>beautifully</p>
+    </div>
+    <div class="stanza">
+      <p>she laughed and turned the camera</p>
+      <p>look at him she said</p>
+      <p>just look at him</p>
+    </div>
+    <div class="stanza">
+      <p>i looked</p>
+      <p>and understood immediately</p>
+      <p>why she loved him</p>
+      <p>why i was always going to love him too</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">28</div>
+</div>
+
+<!-- POEM 29 -->
+<div class="page page-oreo">
+  <div class="poem-title">the chaos agent</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>oreo has no concept</p>
+      <p>of inconvenient timing</p>
+    </div>
+    <div class="stanza">
+      <p>important call? oreo's there</p>
+      <p>serious moment? oreo</p>
+      <p>quiet night? oreo</p>
+      <p>oreo</p>
+      <p>oreo</p>
+      <p>oreo, with his full personality</p>
+      <p>and absolutely zero shame</p>
+    </div>
+    <div class="stanza">
+      <p>i respect him enormously</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">29</div>
+</div>
+
+<!-- POEM 30 -->
+<div class="page page-oreo">
+  <div class="poem-title">oreo doesn't know</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>oreo doesn't know</p>
+      <p>that he's in a book</p>
+    </div>
+    <div class="stanza">
+      <p>oreo doesn't know</p>
+      <p>that somewhere miles away</p>
+      <p>someone lights up</p>
+      <p>every time he waddles into frame</p>
+    </div>
+    <div class="stanza">
+      <p>oreo doesn't know</p>
+      <p>he's been part of this friendship</p>
+      <p>from the very beginning</p>
+    </div>
+    <div class="stanza">
+      <p>but i know</p>
+      <p>and i'm grateful for him</p>
+      <p>the four-legged thread</p>
+      <p>running through everything</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">30</div>
+</div>
+
+<!-- POEM 31 -->
+<div class="page page-oreo">
+  <div class="poem-title">the white dog</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>she gave me a small white dog</p>
+      <p>soft</p>
+      <p>a little ridiculous-looking</p>
+      <p>perfect</p>
+    </div>
+    <div class="stanza">
+      <p>it was oreo, essentially</p>
+      <p>made portable</p>
+      <p>made mine</p>
+      <p>a piece of her world</p>
+      <p>handed across the distance</p>
+    </div>
+    <div class="stanza">
+      <p>she probably didn't know</p>
+      <p>how much it meant</p>
+      <p>that she thought of it</p>
+      <p>that she thought of <span class="secret" data-msg="she thought of you. she always does.">me</span></p>
+      <p>that she closed the gap</p>
+      <p>with something small and real</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">31</div>
+</div>
+
+<!-- POEM 32 -->
+<div class="page page-oreo">
+  <div class="poem-title">oreo, last seen</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>last seen</p>
+      <p>being entirely himself</p>
+      <p>in the background of a video</p>
+      <p>sent at an unreasonable hour</p>
+    </div>
+    <div class="stanza">
+      <p>last seen</p>
+      <p>being the world's greatest supporting cast</p>
+      <p>to a friendship</p>
+      <p>he had no idea he was part of</p>
+    </div>
+    <div class="stanza">
+      <p>last seen</p>
+      <p>right in the middle of everything</p>
+    </div>
+    <div class="stanza">
+      <p>good boy</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">32</div>
+</div>
+
+<!-- SECTION BREAK V -->
+<div class="page page-section-break">
+  <div class="section-num">part five</div>
+  <div class="section-label">k, and everything<br>that word holds</div>
+  <div class="section-divider"></div>
+</div>
+
+<!-- POEM 33 -->
+<div class="page">
+  <div class="poem-title">unnamed</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>i've been trying to name this for a year</p>
+    </div>
+    <div class="stanza">
+      <p>friendship — too thin</p>
+      <p>connection — too clinical</p>
+      <p>luck — too passive</p>
+    </div>
+    <div class="stanza">
+      <p>the truth is</p>
+      <p>some things are bigger than their word</p>
+      <p>and that's okay</p>
+      <p>that's actually okay</p>
+    </div>
+    <div class="stanza">
+      <p>i know what it is</p>
+      <p>even if i can't say it</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">33</div>
+</div>
+
+<!-- POEM 34 -->
+<div class="page">
+  <div class="poem-title">distance, redefined</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>distance used to mean absence</p>
+      <p>then i met her</p>
+    </div>
+    <div class="stanza">
+      <p>now distance is just</p>
+      <p>the thing between here and there</p>
+      <p>that we cross every time we talk</p>
+      <p>without thinking about it</p>
+    </div>
+    <div class="stanza">
+      <p>we've been crossing it</p>
+      <p>every day</p>
+      <p>for a year</p>
+      <p>and it's nothing</p>
+      <p>it really is nothing</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">34</div>
+</div>
+
+<!-- POEM 35 -->
+<div class="page">
+  <div class="poem-title">the year of you</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>a year</p>
+      <p>of good mornings and stupid jokes</p>
+      <p>of songs shared and fights forgotten</p>
+      <p>of oreo appearing like a small comet</p>
+      <p>of late nights that lasted too long</p>
+      <p>and not long enough</p>
+    </div>
+    <div class="stanza">
+      <p>a year that felt like longer</p>
+      <p>because we fit more into it</p>
+      <p>than most people fit into years</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">35</div>
+</div>
+
+<!-- POEM 36 -->
+<div class="page">
+  <div class="poem-title">what i kept</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>i kept the videos</p>
+      <p>i kept the small white dog</p>
+      <p>i kept every time</p>
+      <p>she made me laugh at something dumb</p>
+    </div>
+    <div class="stanza">
+      <p>i kept the late nights</p>
+      <p>the honesty</p>
+      <p>the feeling of being known</p>
+      <p>without having to explain yourself first</p>
+    </div>
+    <div class="stanza">
+      <p>i kept everything</p>
+      <p>and now i've put it here</p>
+      <p>so she can keep it too</p>
+    </div>
+  </div>
+  <div class="k-mark">k</div>
+  <div class="ornament">✦</div>
+  <div class="page-num">36</div>
+</div>
+
+<!-- POEM 37 -->
+<div class="page">
+  <div class="poem-title">how i know it's real</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>because when she's having a bad day</p>
+      <p>i feel it through the screen</p>
+    </div>
+    <div class="stanza">
+      <p>because when something good happens to her</p>
+      <p>i'm happy in a way that has nothing</p>
+      <p>to do with me</p>
+    </div>
+    <div class="stanza">
+      <p>because after the gap</p>
+      <p>everything resumed</p>
+      <p>no friction</p>
+      <p>no damage</p>
+    </div>
+    <div class="stanza">
+      <p>nothing fake</p>
+      <p>survives a year</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">37</div>
+</div>
+
+<!-- POEM 38 -->
+<div class="page">
+  <div class="poem-title">things i never said</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>i never said</p>
+      <p>i check my phone differently now</p>
+      <p>with a small hope it's you</p>
+    </div>
+    <div class="stanza">
+      <p>i never said</p>
+      <p>you make the distance feel smaller</p>
+      <p>in a world that is very large</p>
+      <p>and often cold</p>
+    </div>
+    <div class="stanza">
+      <p>i never said</p>
+      <p>that night on ometv</p>
+      <p>something shifted quietly</p>
+      <p>and never shifted back</p>
+    </div>
+    <div class="stanza">
+      <p>i'm saying it now</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">38</div>
+</div>
+
+<!-- POEM 39 -->
+<div class="page">
+  <div class="poem-title">for the record</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>for the record</p>
+      <p>you are one of my favorite people</p>
+      <p>on this whole planet</p>
+      <p>which is saying something</p>
+      <p>because the planet is very full of people</p>
+      <p>and most of them aren't you</p>
+    </div>
+    <div class="stanza">
+      <p>for the record</p>
+      <p>i'm glad you didn't swipe on</p>
+      <p>i'm glad i didn't either</p>
+    </div>
+    <div class="stanza">
+      <p>for the record</p>
+      <p>this has been the best surprise</p>
+      <p>of a year full of them</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">39</div>
+</div>
+
+<!-- POEM 40 -->
+<div class="page">
+  <div class="poem-title">soft landing</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>she's the kind of person</p>
+      <p>you can land on</p>
+    </div>
+    <div class="stanza">
+      <p>that sounds strange</p>
+      <p>but you know what i mean</p>
+    </div>
+    <div class="stanza">
+      <p>when things are sharp</p>
+      <p>and loud and too much</p>
+      <p>she's the landing</p>
+      <p>the laugh that breaks the tension</p>
+      <p>the voice that says you're fine</p>
+      <p>and means it</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">40</div>
+</div>
+
+<!-- POEM 41 -->
+<div class="page">
+  <div class="poem-title">still here</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>a year from a random screen</p>
+      <p>and we're still here</p>
+    </div>
+    <div class="stanza">
+      <p>after the gaps</p>
+      <p>after the fights</p>
+      <p>after the silence</p>
+      <p>after oreo ate something he shouldn't</p>
+      <p>and she sent me the video anyway</p>
+    </div>
+    <div class="stanza">
+      <p>still here</p>
+      <p>still us</p>
+      <p>still exactly this</p>
+      <p>whatever this is</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">41</div>
+</div>
+
+<!-- POEM 42 -->
+<div class="page">
+  <div class="poem-title">somewhere between</div>
+  <div class="poem-body">
+    <div class="stanza">
+      <p>somewhere between screens</p>
+      <p>and cities</p>
+      <p>and a dog named oreo</p>
+    </div>
+    <div class="stanza">
+      <p>somewhere between the first laugh</p>
+      <p>and all the ones after</p>
+      <p>somewhere between what we are</p>
+      <p>and the word that doesn't exist yet</p>
+    </div>
+    <div class="stanza">
+      <p>there is this</p>
+    </div>
+    <div class="stanza">
+      <p>there is you</p>
+      <p>there is me</p>
+      <p>there is the small white dog</p>
+      <p>on my shelf</p>
+    </div>
+    <div class="stanza">
+      <p>and that's more than enough</p>
+      <p>it always was</p>
+    </div>
+  </div>
+  <div class="ornament">✦</div>
+  <div class="page-num">42</div>
+</div>
+
+<!-- END PAGE -->
+<div class="page page-end">
+  <div class="end-text">
+    for k.<br>
+    she knows why.
+  </div>
+  <div class="end-paw">🐾</div>
+  <div class="page-num">—</div>
+</div>
+
+<script>
+  // easter egg: if you click the cover title 5 times, a hidden message appears
+  let coverClicks = 0;
+  const coverTitle = document.querySelector('.cover-title');
+  const coverInner = document.querySelector('.cover-inner');
+  coverTitle.style.cursor = 'default';
+  coverTitle.addEventListener('click', () => {
+    coverClicks++;
+    if (coverClicks === 5) {
+      const msg = document.createElement('div');
+      msg.style.cssText = 'margin-top:1.5rem;font-size:0.78rem;color:#c8a96e;font-style:italic;opacity:0;transition:opacity 1s;font-family:EB Garamond,serif;line-height:1.8;';
+      msg.textContent = 'you found it.\nthis whole book is just one long way of saying:\nthanks for existing, k.';
+      msg.style.whiteSpace = 'pre-line';
+      coverInner.querySelector('.cover-top').appendChild(msg);
+      setTimeout(() => msg.style.opacity = '1', 50);
+    }
+  });
+
+  // easter egg: konami-style — type "oreo" anywhere to make paws rain
+  let typed = '';
+  document.addEventListener('keydown', (e) => {
+    typed += e.key.toLowerCase();
+    if (typed.includes('oreo')) {
+      typed = '';
+      for (let i = 0; i < 12; i++) {
+        setTimeout(() => {
+          const paw = document.createElement('div');
+          paw.textContent = '🐾';
+          paw.style.cssText = `position:fixed;top:-2rem;left:${Math.random()*100}vw;font-size:${1+Math.random()*1.5}rem;pointer-events:none;z-index:9999;transition:top 2.5s ease-in,opacity 1s 1.5s;opacity:1;`;
+          document.body.appendChild(paw);
+          setTimeout(() => { paw.style.top = '105vh'; paw.style.opacity = '0'; }, 50);
+          setTimeout(() => paw.remove(), 3000);
+        }, i * 120);
+      }
+    }
+  });
+
+  // easter egg: long-press on any poem title for 1.5s shows a hidden note
+  const poemTitles = document.querySelectorAll('.poem-title');
+  poemTitles.forEach(title => {
+    let timer;
+    const secrets = [
+      'this one took the longest to write.',
+      'this poem is about 3am. you know the one.',
+      'oreo approved this message.',
+      'k read this and felt something. probably.',
+      'you weren\'t supposed to find this.',
+      'still here. still us.',
+      'this is the one i almost deleted.',
+    ];
+    const msg = secrets[Math.floor(Math.random() * secrets.length)];
+    title.addEventListener('mousedown', () => {
+      timer = setTimeout(() => {
+        const note = document.createElement('div');
+        note.textContent = msg;
+        note.style.cssText = 'position:absolute;top:1.5rem;left:3rem;right:3rem;text-align:center;font-size:0.7rem;color:#c8a96e;font-style:italic;font-family:EB Garamond,serif;letter-spacing:0.05em;opacity:0;transition:opacity 0.5s;z-index:10;';
+        title.parentElement.appendChild(note);
+        setTimeout(() => note.style.opacity = '1', 10);
+        setTimeout(() => { note.style.opacity = '0'; setTimeout(() => note.remove(), 500); }, 3000);
+      }, 1500);
+    });
+    title.addEventListener('mouseup', () => clearTimeout(timer));
+    title.addEventListener('mouseleave', () => clearTimeout(timer));
+  });
+</script>
+</body>
+</html>
